@@ -2,8 +2,6 @@ import express, { Express, NextFunction, Request, Response } from "express";
 import cors from "cors";
 import { checkBoard } from "./src/game";
 import cookieParser from "cookie-parser";
-import dotenv from "dotenv";
-import session from "express-session";
 
 function uuidv4(): string {
   // @ts-ignore
