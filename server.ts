@@ -17,9 +17,9 @@ function uuidv4(): string {
 const app: Express = express();
 console.log(process.env.PORT);
 const port = process.env.PORT || 4001;
-app.use(cors());
 app.use(
   cors({
+    credentials: true,
     origin: [
       "http://localhost:5174",
       "https://tictactoe-iyanam.netlify.app",
@@ -27,9 +27,8 @@ app.use(
     ],
   })
 );
-
-app.use(express.json());
 app.use(cookieParser());
+app.use(express.json());
 
 let games = {
   ["tictactoe"]: {

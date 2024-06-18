@@ -9,6 +9,7 @@ import Modal from './Modal';
 
 function TicTacToe() {
     const url = 'https://tictactoe-multiclient.onrender.com'
+    // const url = 'http://localhost:4000'
     const { id } = useParams();
     const blankBoard = [
         ["", "", ""],
