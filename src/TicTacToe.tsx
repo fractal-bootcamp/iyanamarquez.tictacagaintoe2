@@ -9,9 +9,9 @@ import Modal from './Modal';
 import { motion } from "framer-motion"
 
 
-// const url = 'https://tictactoe-multiclient.onrender.com'
+const url = 'https://tictactoe-multiclient.onrender.com'
 // const url = 'http://localhost:4000'
-const url = process.env.BASE_URL
+// const url = process.env.BASE_URL
 
 function TicTacToe() {
     const { id } = useParams();
