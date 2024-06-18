@@ -6,8 +6,12 @@ import './App.css'
 import { Board } from './game'
 import { Link, useParams } from 'react-router-dom';
 import Modal from './Modal';
+import { useNavigate } from 'react-router'
+
 
 function TicTacToe() {
+    const navigate = useNavigate()
+
     const url = 'https://tictactoe-multiclient.onrender.com'
     // const url = 'http://localhost:4000'
     const { id } = useParams();
@@ -141,7 +145,7 @@ function TicTacToe() {
                             .then(data => {
                                 setGameBoard(data.game.board)
                             });
-                        window.location.reload()
+                        navigate(0)
                     }}>
                         Reset Game
                     </button>
