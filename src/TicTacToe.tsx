@@ -57,7 +57,7 @@ function TicTacToe() {
     }, [poller]);
 
     const handleMove = (data: { rowId: number; itemId: number }) => {
-        fetch(`${url}game/${id}/move`, {
+        fetch(`${url}/game/${id}/move`, {
             method: "POST", // or 'PUT'
             credentials: 'include',
             headers: {
