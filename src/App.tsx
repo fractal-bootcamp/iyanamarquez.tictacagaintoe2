@@ -1,7 +1,3 @@
-import {
-  useState, MouseEvent,
-  useEffect
-} from 'react'
 import './App.css'
 
 import Lobby from './Lobby'

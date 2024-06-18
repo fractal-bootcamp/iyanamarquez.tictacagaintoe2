@@ -1,15 +1,17 @@
 import {
-    useState, MouseEvent,
+    useState,
     useEffect
 } from 'react'
 import './App.css'
 
 function Lobby() {
+    const url = 'https://tictactoe-multiclient.onrender.com'
+
     const [games, setGames] = useState<any>([])
 
     // fetch all games
     useEffect(() => {
-        fetch("http://localhost:4000/games/", {
+        fetch(`${url}/games/`, {
             method: "GET", // or 'PUT'
             headers: {
                 "Content-Type": "application/json",

@@ -8,6 +8,7 @@ import { useParams } from 'react-router-dom';
 import Modal from './Modal';
 
 function TicTacToe() {
+    const url = 'https://tictactoe-multiclient.onrender.com'
     const { id } = useParams();
     const blankBoard = [
         ["", "", ""],
@@ -23,7 +24,7 @@ function TicTacToe() {
 
     useEffect(() => {
         const refresh = () => {
-            fetch(`http://localhost:4000/game/${id}`, {
+            fetch(`${url}/game/${id}`, {
                 method: "GET", // or 'PUT',
                 headers: {
                     "Content-Type": "application/json",
@@ -54,7 +55,7 @@ function TicTacToe() {
     }, [poller]);
 
     const handleMove = (data: { rowId: number; itemId: number }) => {
-        fetch(`http://localhost:4000/game/${id}/move`, {
+        fetch(`${url}game/${id}/move`, {
             method: "POST", // or 'PUT'
             credentials: 'include',
             headers: {
@@ -127,24 +128,10 @@ function TicTacToe() {
                 </div>
                 <br>
                 </br>
-                {/* <button onClick={() => {
-                    setCont(true)
-                    fetch(`http://localhost:4000/game/${id}/restart`, {
-                        method: "POST", // or 'PUT'
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                    }).then(response => response.json())
-                        .then(data => {
-                            setGameBoard(data.game.board)
-                        });
-                    window.location.reload()
-                }}>Reset game</button>
-                <a href='/'><button>Lobby</button></a> */}
                 <div className="inline-flex self-center" >
                     <button className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-l mx-2" onClick={() => {
                         setCont(true)
-                        fetch(`http://localhost:4000/game/${id}/restart`, {
+                        fetch(`${url}/game/${id}/restart`, {
                             method: "POST", // or 'PUT'
                             headers: {
                                 "Content-Type": "application/json",
