@@ -3,6 +3,7 @@ import {
     useEffect
 } from 'react'
 import './App.css'
+import { Link } from 'react-router-dom'
 
 function Lobby() {
     const url = 'https://tictactoe-multiclient.onrender.com'
@@ -37,10 +38,10 @@ function Lobby() {
 
                             console.log('erm', Object.keys(x)[idx])
                             return < li className="my-4" >
-                                <a href={`/game/${games[x].id}`}>
+                                <Link to={`/game/${games[x].id}`}>
                                     <button className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow">
                                         Button Game {idx + 1}
-                                    </button></a>
+                                    </button></Link>
                             </li>
                         })}
                     </ul>

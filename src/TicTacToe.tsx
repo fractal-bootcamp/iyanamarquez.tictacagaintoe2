@@ -4,7 +4,7 @@ import {
 } from 'react'
 import './App.css'
 import { Board } from './game'
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import Modal from './Modal';
 
 function TicTacToe() {
@@ -145,11 +145,11 @@ function TicTacToe() {
                     }}>
                         Reset Game
                     </button>
-                    <a href='/'>
+                    <Link to='/'>
                         <button className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-r mx-2">
                             Lobby
                         </button>
-                    </a>
+                    </Link>
 
                 </div>
             </div>
