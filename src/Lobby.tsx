@@ -21,19 +21,32 @@ function Lobby() {
             });
     }, [])
     return (
-        <div>
-            <h1>Lobby</h1>
-            {/* show list of games ,ids attached to each item, on click make a get to that game*/}
-            <ul>
-                {Object.keys(games).map((x, idx) => {
-                    console.log('erm', games[x].id)
+        <div className='bg-white rounded-xl lg:w-96 lg:h-96 shadow-2xl'>
+            <div className="max-w-sm rounded ">
+                <div className="px-6 py-4">
+                    <h1 className='mb-4'>Lobby</h1>
+                    <p className="text-gray-700 text-base">
+                        Join a game down below                    </p>
+                </div>
+                <div className="px-6 pt-4 pb-2">
+                    <ul className='flex flex-col'>
+                        {Object.keys(games).map((x, idx) => {
+                            console.log('erm', games[x].id)
 
-                    console.log('erm', Object.keys(x)[idx])
-                    return < li >
-                        <a href={`/game/${games[x].id}`}><button>Game {idx + 1}</button></a>
-                    </li>
-                })}
-            </ul>
+                            console.log('erm', Object.keys(x)[idx])
+                            return < li className="my-4" >
+                                <a href={`/game/${games[x].id}`}>
+                                    <button className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow">
+                                        Button Game {idx + 1}
+                                    </button></a>
+                            </li>
+                        })}
+                    </ul>
+                </div>
+            </div>
+            {/* show list of games ,ids attached to each item, on click make a get to that game*/}
+
+
         </div>
     )
 }
