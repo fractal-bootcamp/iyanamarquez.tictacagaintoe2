@@ -6,9 +6,12 @@ import './App.css'
 import { Board } from './game'
 import { Link, useParams } from 'react-router-dom';
 import Modal from './Modal';
+import { motion } from "framer-motion"
 
-const url = 'https://tictactoe-multiclient.onrender.com'
+
+// const url = 'https://tictactoe-multiclient.onrender.com'
 // const url = 'http://localhost:4000'
+const url = process.env.BASE_URL
 
 function TicTacToe() {
     const { id } = useParams();
@@ -96,9 +99,11 @@ function TicTacToe() {
                 {gameState.outcome == 'tie' && <Modal message={'Tie game'} />}
                 <div className='flex justify-center'>
                     {gameBoard.map((row, rowindex) => {
+
                         return <div className='' id={rowindex.toString()}>{
                             row.map((_string, itemIdx) => {
-                                return <div onClick={handleClick} id={itemIdx.toString()} className=' grid-cols-3 border border-black w-20 h-20 flex justify-center items-center text-6xl'>{gameBoard[itemIdx][rowindex]}</div>
+                                return <motion.div whileTap={{ scale: 1.1 }}
+                                    onClick={handleClick} id={itemIdx.toString()} className=' grid-cols-3 border border-black w-20 h-20 flex justify-center items-center text-6xl hover:bg-purple-200 hover:cursor-pointer'>{gameBoard[itemIdx][rowindex]}</motion.div>
                             })
                         }</div>
                     })}
