@@ -94,7 +94,13 @@ const verifyPlayer = async (
     const fetchCookie = async () => {
       const newcookie = uuidv4();
       if (!req.cookies.user_id) {
-        res.cookie("user_id", newcookie, { maxAge: 9000000, httpOnly: true });
+        res.cookie("user_id", newcookie, {
+          maxAge: 9000000,
+          httpOnly: true,
+          domain: req.baseUrl,
+          sameSite: "none",
+          secure: true,
+        });
         return newcookie;
       }
       return await req.cookies.user_id;

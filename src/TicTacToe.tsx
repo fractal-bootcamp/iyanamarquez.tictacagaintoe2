@@ -7,9 +7,10 @@ import { Board } from './game'
 import { Link, useParams } from 'react-router-dom';
 import Modal from './Modal';
 
+const url = 'https://tictactoe-multiclient.onrender.com'
+// const url = 'http://localhost:4000'
+
 function TicTacToe() {
-    const url = 'https://tictactoe-multiclient.onrender.com'
-    // const url = 'http://localhost:4000'
     const { id } = useParams();
     const blankBoard = [
         ["", "", ""],
