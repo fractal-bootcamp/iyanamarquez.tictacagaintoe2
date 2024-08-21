@@ -3,12 +3,13 @@
 @tailwind utilities;
 
 h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+  font-family: "Press Start 2P", cursive;
 }
 
 body {
   text-align: center;
   margin: 0 auto;
   overflow: hidden;
+  font-family: "Press Start 2P", cursive;
+  /* font-family: "Pacifico", cursive; */
 }
