@@ -19,8 +19,8 @@ const Socket: React.FC = () => {
         lobbyId: string;
     }
 
-
-    const socketUrl = 'ws://localhost:3000';
+    // socket url
+    const socketUrl = process.env.REACT_APP_SOCKET_URL || 'ws://localhost:3000';
 
     const [lobbyInput, setLobbyInput] = useState('');
     const [lobbies, setLobbies] = useState<Lobby[]>([]);
