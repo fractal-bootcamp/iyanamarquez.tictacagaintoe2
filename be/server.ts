@@ -1,6 +1,6 @@
 import express, { Express, NextFunction, Request, Response } from "express";
 import cors from "cors";
-import { checkBoard } from "./src/game";
+import { checkBoard } from "./game";
 import cookieParser from "cookie-parser";
 
 function uuidv4(): string {

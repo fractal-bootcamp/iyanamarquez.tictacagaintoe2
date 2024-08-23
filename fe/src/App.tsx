@@ -1,14 +1,16 @@
 import './App.css'
 
 import Lobby from './Lobby'
+import Socket from './Socket'
 
 function App() {
   return (
     <div className='flex flex-col justify-center w-screen mt-10'>
-      <h1 className='font-mono mb-4 !text-black rounded-3xl text-2xl lg:text-6xl'>TIC TAC TOE</h1>
+      {/* <h1 className='font-mono mb-4 !text-black rounded-3xl text-2xl lg:text-6xl'>TIC TAC TOE</h1>
       <div className='border-t-4 border-blue-400 bg-blue-100'>
         <Lobby />
-      </div>
+      </div> */}
+      <Socket />
 
     </div>
   )
