@@ -263,7 +263,13 @@ wss.on("connection", (ws) => {
       if (lobbyIndex !== -1) {
         let lobby = lobbies[lobbyIndex];
         lobby.gameBoard = JSON.parse(JSON.stringify(blankBoard));
-        lobby.nextMove = nextMove.X;
+        const recentPlayer = lobby.players.find((player) => player.ws === ws);
+        if (recentPlayer) {
+          lobby.nextMove =
+            recentPlayer.playerLetter === "X" ? nextMove.O : nextMove.X;
+        } else {
+          lobby.nextMove = nextMove.X; // Default to X if recent player not found
+        }
         lobby.isWin = {
           winner: null,
           outcome: "continue",
@@ -296,13 +302,23 @@ wss.on("connection", (ws) => {
       if (lobbyIndex !== -1) {
         let lobby = lobbies[lobbyIndex];
 
-        // Find the index of the player who wants to leave
+        // Notify other players first
+        lobby.players.forEach((player) => {
+          if (player.ws !== ws && player.ws.readyState === WebSocket.OPEN) {
+            player.ws.send(
+              JSON.stringify({
+                type: "PLAYER_LEFT",
+                data: { lobbyId: lobby.id },
+              })
+            );
+          }
+        });
+
+        // Then remove the player who wants to leave
         const playerIndex = lobby.players.findIndex(
           (player) => player.ws === ws
         );
-
         if (playerIndex !== -1) {
-          // Remove the player at the found index
           lobby.players.splice(playerIndex, 1);
           console.log(
             `Player at index ${playerIndex} removed from lobby ${lobby.id}`
@@ -324,25 +340,15 @@ wss.on("connection", (ws) => {
           console.log(`Player not found in lobby ${lobby.id}`);
         }
 
-        // Notify other players first
-        lobby.players.forEach((player) => {
-          if (player.ws !== ws && player.ws.readyState === WebSocket.OPEN) {
-            player.ws.send(
-              JSON.stringify({
-                type: "PLAYER_LEFT",
-                data: { lobbyId: lobby.id },
-              })
-            );
-          }
-        });
-
         // Notify the leaving player
         ws.send(
           JSON.stringify({
             type: "LEFT_LOBBY",
-            data: { lobbyId: "" },
+            data: { lobbyId: lobby.id },
           })
         );
+      } else {
+        console.log("Lobby not found for the leaving player");
       }
     }
   });
@@ -366,7 +372,7 @@ wss.on("connection", (ws) => {
             player.ws.send(
               JSON.stringify({
                 type: "PLAYER_LEFT",
-                data: { lobbyId: lobbies[lobbyIndex].id },
+                data: { lobbyId: lobby.id },
               })
             );
           }
