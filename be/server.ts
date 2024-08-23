@@ -14,7 +14,7 @@ app.use(
     credentials: true,
     origin: [
       "http://localhost:5174",
-      "https://tictactoe-iyanam.netlify.app",
+      "https://tictactoe-yaya.netlify.app/",
       "http://localhost:5173",
     ],
   })
