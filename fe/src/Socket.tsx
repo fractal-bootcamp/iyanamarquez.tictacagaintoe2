@@ -20,7 +20,7 @@ const Socket: React.FC = () => {
     }
 
 
-    const socketUrl = process.env.REACT_APP_SOCKET_URL || 'ws://localhost:3000';
+    const socketUrl = import.meta.env.VITE_SOCKET_URL || 'ws://localhost:3000';
 
     const [lobbyInput, setLobbyInput] = useState('');
     const [lobbies, setLobbies] = useState<Lobby[]>([]);
