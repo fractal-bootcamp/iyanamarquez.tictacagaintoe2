@@ -183,9 +183,11 @@ const Socket: React.FC = () => {
             <br></br>
             <div className='flex flex-col items-center gap-4 mt-4'>
                 {gameState.lobbyId === '' ? (
-                    <div className='flex flex-col items-start gap-4'>
+                    <div className='flex flex-col items-center sm:items-start gap-4'>
+                        {/* create lobby */}
                         <button onClick={createLobby} className='rounded-md border border-pink-200 mx-2 p-2 bg-pink-100 text-black text-xs transition-transform transform focus:outline-none active:scale-95'>Create Lobby</button>
-                        <div className='flex flex-row items-center gap-4'>
+                        {/* join lobby */}
+                        <div className='flex flex-col sm:flex-row items-center gap-4'>
                             <button onClick={joinLobby} className='rounded-md border border-pink-200 mx-2 p-2 bg-pink-100 text-black text-xs transition-transform transform focus:outline-none  active:scale-95'>Join Lobby</button>
                             <input
                                 type="text"
@@ -219,14 +221,14 @@ const Socket: React.FC = () => {
                 )}
             </div>
             {gameState.lobbyId && (
-                <div>
+                <div className='flex flex-col sm:flex-row items-center justify-center gap-4 mt-4'>
                     <button className='border border-pink-200 rounded-lg mx-2 p-2 bg-pink-100 text-black text-xs mt-4 transition-transform transform active:scale-95' onClick={restartGame}>Restart Game</button>
                     <button className='border border-pink-200 rounded-lg mx-2 p-2 bg-pink-100 text-black text-xs mt-4 transition-transform transform focus:outline-none active:scale-95' onClick={leaveLobby}>Leave Lobby</button>
                 </div>
             )}
             {gameState.lobbyId === '' && (
                 <div className='flex flex-col items-center gap-4 mt-4'>
-                    <button className='border border-green-200 rounded-lg mx-2 p-2 bg-green-100 text-black text-xs mt-4 transition-transform transform focus:outline-none active:scale-95' onClick={getLobbies}>refresh</button>
+                    <button className='border border-green-200 rounded-lg mx-2 p-2 bg-green-100 text-black text-xs mt-4 transition-transform transform focus:outline-none active:scale-95' onClick={getLobbies}>Refresh Lobbies</button>
                     {lobbies.map((lobby) => (
                         <div key={lobby?.id}>
                             <button onClick={() => joinLobbyById(lobby?.id)} className='text-xs border border-pink-200 rounded-lg mx-2 p-2 bg-pink-100 text-black text-xs mt-4 transition-transform transform focus:outline-none active:scale-95'>Players: {lobby?.playerCount}/2</button>
