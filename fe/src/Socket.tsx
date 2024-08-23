@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import useWebSocket, { ReadyState } from 'react-use-websocket';
 
-const WS_URL = 'ws://localhost:3001'; // URL of your WebSocket server
 
 const Socket: React.FC = () => {
     const blankBoard = [
@@ -10,113 +10,95 @@ const Socket: React.FC = () => {
     ];
 
     const [lobbyInput, setLobbyInput] = useState('');
-    const [state, setState] = useState<{
+    const [socketUrl, setSocketUrl] = useState('ws://localhost:3000');
+    const [gameState, setGameState] = useState<{
         gameBoard: typeof blankBoard;
         playerLetter: string | null;
         lobbyId: string;
         message: string;
+        currentPlayer: string;
     }>({
         gameBoard: blankBoard,
         playerLetter: null,
         lobbyId: '',
         message: '',
+        currentPlayer: '',
     });
 
-    const wsRef = useRef<WebSocket | null>(null);
+    const { sendMessage, lastMessage, readyState, getWebSocket } = useWebSocket(socketUrl, {
+        onOpen: () => console.log('WebSocket connection established.'),
+        onClose: () => console.log('WebSocket connection closed.'),
+        onError: (error) => console.error('WebSocket error:', error),
+        shouldReconnect: (closeEvent) => true,
+        reconnectInterval: 3000,
+    });
 
-    const connectWebSocket = () => {
-        if (wsRef.current) {
-            wsRef.current.close(); // Close existing connection if it exists
-        }
+    const connectionStatus = {
+        [ReadyState.CONNECTING]: 'Connecting',
+        [ReadyState.OPEN]: 'Open',
+        [ReadyState.CLOSING]: 'Closing',
+        [ReadyState.CLOSED]: 'Closed',
+        [ReadyState.UNINSTANTIATED]: 'Uninstantiated',
+    }[readyState];
 
-        wsRef.current = new WebSocket(WS_URL);
+    // console.log('state of the game', gameState);
 
-        wsRef.current.onopen = () => {
-            console.log('WebSocket connection opened');
-        };
-
-        wsRef.current.onmessage = (event) => {
-            console.log('WebSocket message received:', event.data);
-            const data = JSON.parse(event.data);
+    useEffect(() => {
+        if (lastMessage !== null) {
+            const data = JSON.parse(lastMessage.data);
+            console.log('data.data', data.data);
             switch (data.type) {
                 case 'LOBBY_CREATED':
-                    setState(prev => ({ ...prev, lobbyId: data.lobbyId, playerLetter: 'X' }));
+                    console.log('hititng here')
+                    setGameState(prev => ({ ...prev, lobbyId: data.data.lobbyId, gameBoard: data.data.gameBoard, playerLetter: data.data.players[0].playerLetter, currentPlayer: data.data.currentPlayer }));
                     break;
                 case 'JOINED_LOBBY':
-                    setState(prev => ({ ...prev, playerLetter: data.playerLetter }));
+                    setGameState(prev => ({ ...prev, playerLetter: data.playerLetter }));
                     break;
                 case 'GAME_START':
-                    setState(prev => ({ ...prev, gameBoard: data.board }));
+                    setGameState(prev => ({ ...prev, gameBoard: data.data.gameBoard }));
                     break;
                 case 'MOVE_MADE':
-                    setState(prev => ({ ...prev, gameBoard: data.board }));
+                    setGameState(prev => ({ ...prev, gameBoard: data.data.gameBoard, currentPlayer: data.data.currentPlayer }));
                     break;
                 case 'LOBBY_FULL':
-                    setState(prev => ({ ...prev, message: 'Lobby is full' }));
+                    setGameState(prev => ({ ...prev, message: 'Lobby is full' }));
                     break;
                 case 'PLAYER_LEFT':
-                    setState(prev => ({ ...prev, message: 'A player left the game' }));
+                    setGameState(prev => ({ ...prev, message: 'A player left the game' }));
                     break;
                 default:
                     console.log('Unknown message type:', data.type);
             }
-        };
-
-        wsRef.current.onclose = () => {
-            console.log('WebSocket connection closed, reconnecting...');
-            setTimeout(connectWebSocket, 3000); // Attempt to reconnect after 3 seconds
-        };
-
-        wsRef.current.onerror = (error) => {
-            console.error('WebSocket error:', error);
-        };
-    };
-
-    useEffect(() => {
-        connectWebSocket();
-
-        return () => {
-            if (wsRef.current) {
-                wsRef.current.close();
-            }
-        };
-    }, []);
+        }
+    }, [lastMessage]);
 
     const createLobby = () => {
-        if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
-            wsRef.current.send(JSON.stringify({ type: 'CREATE_LOBBY' }));
-        } else {
-            console.error('WebSocket connection is not open');
-        }
+        sendMessage(JSON.stringify({ type: 'CREATE_LOBBY' }));
     };
-
-    const joinLobby = (id: string) => {
-        if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
-            wsRef.current.send(JSON.stringify({ type: 'JOIN_LOBBY', lobbyId: id }));
-        } else {
-            console.error('WebSocket connection is not open');
-        }
+    const joinLobby = () => {
+        sendMessage(JSON.stringify({ type: 'JOIN_LOBBY', lobbyId: '123' }));
     };
-
     const makeMove = (row: number, col: number) => {
-        if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
-            wsRef.current.send(JSON.stringify({ type: 'MAKE_MOVE', lobbyId: state.lobbyId, row: row, col: col, playerLetter: state.playerLetter }));
-        } else {
-            console.error('WebSocket connection is not open');
-        }
+        sendMessage(JSON.stringify({ type: 'MAKE_MOVE', row, col, playerLetter: gameState.playerLetter }));
     };
-
 
     return (
         <div>
             <h1 className='text-2xl font-bold mb-6 underline'>Tic-Tac-Toe</h1>
-            {state.lobbyId != '' && <span >Lobby ID: <span className='font-mono'>{state.lobbyId}</span></span>}
+            {gameState.lobbyId && <span>Lobby ID: <span className='font-mono'>hi{gameState.lobbyId}</span></span>}
+            <br>
+            </br>
+            <span>The WebSocket is currently {connectionStatus}</span>
+            <br></br>
+            <span>Current Player: {gameState.currentPlayer}</span>
+            <br></br>
             <div className='flex flex-col items-center gap-4 mt-4'>
-                {state.playerLetter === null ? (
+                {gameState.playerLetter === null ? (
                     <div className='flex flex-col items-start gap-4'>
                         <button onClick={createLobby} className='border border-pink-200 rounded-sm mx-2 p-2 bg-pink-100 text-black text-xs'>Create Lobby</button>
                         <div className='flex flex-row items-center gap-4'>
-                            <button onClick={() => joinLobby(lobbyInput)} className='border border-pink-200 rounded-sm mx-2 p-2 bg-pink-100 text-black text-xs'>Join Lobby</button>
+                            <button onClick={() => joinLobby()} className='border border-pink-200 rounded-sm mx-2 p-2 bg-pink-100 text-black text-xs'>Join Lobby</button>
                             <input
                                 type="text"
                                 placeholder="Enter join code"
@@ -128,14 +110,15 @@ const Socket: React.FC = () => {
                     </div>
                 ) : (
                     <div>
+                        {console.log('current board', gameState.gameBoard)}
                         <div className='flex justify-center bg-white'>
-                            {state.gameBoard.map((row, rowindex) => (
+                            {gameState.gameBoard?.map((row, rowindex) => (
                                 <div key={rowindex} className='grid grid-cols-1'>
                                     {row.map((cell, cellIndex) => (
                                         <div
                                             key={cellIndex}
                                             onClick={() => makeMove(rowindex, cellIndex)}
-                                            className=' border border-black w-20 h-20 flex justify-center items-center text-4xl hover:bg-purple-200 hover:cursor-pointer'
+                                            className='border border-black w-20 h-20 flex justify-center items-center text-4xl hover:bg-purple-200 hover:cursor-pointer'
                                         >
                                             {cell}
                                         </div>
@@ -143,12 +126,11 @@ const Socket: React.FC = () => {
                                 </div>
                             ))}
                         </div>
-                        {state.message && <p>{state.message}</p>}
+                        {gameState.message && <p>{gameState.message}</p>}
                     </div>
                 )}
             </div>
         </div>
-
     );
 };
 
