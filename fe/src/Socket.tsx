@@ -9,7 +9,7 @@ const Socket: React.FC = () => {
         ["", "", ""],
     ];
     interface Lobby {
-        lobbyId: string;
+        id: string;
         players: Player[];
         playerCount: number;
     }
@@ -20,7 +20,9 @@ const Socket: React.FC = () => {
     }
 
 
-    const socketUrl = import.meta.env.VITE_SOCKET_URL || 'ws://localhost:3000';
+    // const socketUrl = import.meta.env.VITE_SOCKET_URL || 'ws://localhost:3000';
+    const socketUrl = 'ws://localhost:3000';
+
 
     const [lobbyInput, setLobbyInput] = useState('');
     const [lobbies, setLobbies] = useState<Lobby[]>([]);
@@ -60,6 +62,7 @@ const Socket: React.FC = () => {
         }
     }, [gameState.message]);
 
+
     const { sendMessage, lastMessage, readyState, } = useWebSocket(socketUrl, {
         onOpen: () => console.log('WebSocket connection established.'),
         onClose: () => console.log('WebSocket connection closed.'),
@@ -76,9 +79,9 @@ const Socket: React.FC = () => {
         [ReadyState.UNINSTANTIATED]: 'Uninstantiated',
     }[readyState];
 
-    console.log('state of the game', gameState);
 
     useEffect(() => {
+
         if (lastMessage !== null) {
             const data = JSON.parse(lastMessage.data);
             console.log('data.data', data.data);
@@ -99,6 +102,9 @@ const Socket: React.FC = () => {
                 case 'LOBBY_FULL':
                     setGameState(prev => ({ ...prev, message: 'Lobby is full' }));
                     break;
+                case 'PLAYER_JOINED':
+                    setGameState(prev => ({ ...prev, message: 'Player joined the lobby' }));
+                    break;
                 case 'PLAYER_LEFT':
                     setGameState(prev => ({ ...prev, message: 'Player left the lobby' }));
                     break;
@@ -109,10 +115,9 @@ const Socket: React.FC = () => {
                     setGameState(prev => ({ ...prev, ...initialGameState }));
                     break;
                 case 'GAME_OVER':
-                    setGameState(prev => ({ ...prev, message: 'Game over', lobbyId: data.data.lobbyId }));
+                    setGameState(prev => ({ ...prev, message: 'Game over' }));
                     break;
                 case 'GET_LOBBIES':
-                    console.log('getting lobbies', data.data);
                     setLobbies(data.data);
                     break;
                 default:
@@ -128,6 +133,15 @@ const Socket: React.FC = () => {
         const joinLobbyMessage = {
             type: 'JOIN_LOBBY',
             lobbyId: lobbyInput
+        };
+        console.log('sending message', joinLobbyMessage);
+        sendMessage(JSON.stringify(joinLobbyMessage));
+    };
+    const joinLobbyById = (lobbyId: string) => {
+        console.log('joining lobby by id', lobbyId);
+        const joinLobbyMessage = {
+            type: 'JOIN_LOBBY',
+            lobbyId: lobbyId
         };
         console.log('sending message', joinLobbyMessage);
         sendMessage(JSON.stringify(joinLobbyMessage));
@@ -210,17 +224,16 @@ const Socket: React.FC = () => {
                     <button className='border border-pink-200 rounded-lg mx-2 p-2 bg-pink-100 text-black text-xs mt-4 transition-transform transform focus:outline-none active:scale-95' onClick={leaveLobby}>Leave Lobby</button>
                 </div>
             )}
-            <div className='flex flex-col items-center gap-4 mt-4'>
-                {gameState.lobbyId === '' && (
+            {gameState.lobbyId === '' && (
+                <div className='flex flex-col items-center gap-4 mt-4'>
                     <button className='border border-green-200 rounded-lg mx-2 p-2 bg-green-100 text-black text-xs mt-4 transition-transform transform focus:outline-none active:scale-95' onClick={getLobbies}>refresh</button>
-                )}
-                {lobbies.map((lobby) => (
-                    <div key={lobby?.lobbyId}>
-                        <p>Lobbies: {lobby?.lobbyId}</p>
-                        <p className='text-xs border border-pink-200 rounded-lg mx-2 p-2 bg-pink-100 text-black text-xs mt-4 transition-transform transform focus:outline-none active:scale-95'>Players: {lobby?.playerCount}/2</p>
-                    </div>
-                ))}
-            </div>
+                    {lobbies.map((lobby) => (
+                        <div key={lobby?.id}>
+                            <button onClick={() => joinLobbyById(lobby?.id)} className='text-xs border border-pink-200 rounded-lg mx-2 p-2 bg-pink-100 text-black text-xs mt-4 transition-transform transform focus:outline-none active:scale-95'>Players: {lobby?.playerCount}/2</button>
+                        </div>
+                    ))}
+                </div>
+            )}
         </div>
     );
 };
