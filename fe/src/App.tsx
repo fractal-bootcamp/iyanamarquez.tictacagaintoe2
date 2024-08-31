@@ -1,10 +1,21 @@
 import './App.css'
-import Socket from './Socket'
+import { Link } from 'react-router-dom'
 
 function App() {
   return (
     <div className='flex flex-col justify-center w-screen mt-10'>
-      <Socket />
+      <h1 className='text-2xl font-bold underline'>Tic-Tac-Toe</h1>
+      <div className='flex flex-col items-center gap-10 mt-24'>
+
+        <Link to="/with-ai">
+          <button className='bg-pink-100 text-black px-4 py-2 rounded-md transition-transform transform active:scale-95'>Play with AI</button>
+        </Link>
+
+        <Link to="/with-friend">
+          <button className='bg-purple-500 text-white px-4 py-2 rounded-md transition-transform transform active:scale-95'>Play with Friend</button>
+        </Link>
+      </div>
+
     </div>
 
   )

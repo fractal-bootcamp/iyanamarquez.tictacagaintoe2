@@ -6,17 +6,23 @@ import {
   createBrowserRouter,
   RouterProvider,
 } from "react-router-dom";
-import Root from './routes/root.tsx';
+import Socket from './Socket.tsx';
+import AiPlay from './AiPlay.tsx';
 
 
 const router = createBrowserRouter([
   {
-    path: "/fun",
-    element: <Root />,
-  },
-  {
     path: "/",
     element: <App />,
+  },
+  {
+    path: "/with-friend",
+    element: <Socket />,
+  },
+
+  {
+    path: "/with-ai",
+    element: <AiPlay />,
   }
 
 ]);

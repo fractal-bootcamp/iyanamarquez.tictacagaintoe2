@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import useWebSocket, { ReadyState } from 'react-use-websocket';
 
 
@@ -171,8 +172,13 @@ const Socket: React.FC = () => {
     };
 
     return (
-        <div>
-            <h1 className='text-2xl font-bold mb-6 underline'>Tic-Tac-Toe</h1>
+        <div className='pt-10'>
+            <div className='flex justify-start ml-10'>
+
+                <Link to="/">
+                    <button className='bg-purple-100 text-black px-4 py-2 rounded-md transition-transform transform active:scale-95 mb-10'>Go Back</button>
+                </Link>
+            </div>
             {gameState.lobbyId && <span>Lobby ID: <span className='font-mono'>{gameState.lobbyId}</span></span>}
             <br>
             </br>
